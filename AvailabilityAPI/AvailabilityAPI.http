@@ -1,0 +1,6 @@
+@AvailabilityAPI_HostAddress = http://localhost:5205
+
+GET {{AvailabilityAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
