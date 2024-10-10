@@ -15,8 +15,8 @@ namespace AdminAPI.Controllers
             _adminService = adminService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAdminByUsername(string id)
+        [HttpGet("getadminbyusername/{id}")]
+        public async Task<IActionResult> GetAdminByUsername([FromRoute] string id)
         {
             var admin = await _adminService.GetAdminByUsername(id);
             if (admin == null)

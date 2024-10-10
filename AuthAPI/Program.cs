@@ -5,6 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
+
 // Register IAuthService with its implementation AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -25,6 +34,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseCors("AllowAll"); // Apply CORS policy
 app.UseAuthorization();
 app.MapControllers();
 

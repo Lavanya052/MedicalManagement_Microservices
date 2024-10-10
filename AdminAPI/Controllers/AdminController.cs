@@ -15,15 +15,15 @@ namespace AdminAPI.Controllers
             _adminService = adminService;
         }
 
-        [HttpGet]
+        [HttpGet("getalladmin")]
         public async Task<IActionResult> GetAllAdmins()
         {
             var admins = await _adminService.GetAllAdmins();
             return Ok(admins);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAdminById(string id)
+        [HttpGet("getadminbyid/{id}")]
+        public async Task<IActionResult> GetAdminById([FromRoute] string id)
         {
             var admin = await _adminService.GetAdminById(id);
             if (admin == null) return NotFound();
@@ -31,15 +31,21 @@ namespace AdminAPI.Controllers
             return Ok(admin);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAdmin(Admin admin)
+        [HttpPost("createadmin")]
+        public async Task<IActionResult> CreateAdmin([FromBody] Admin admin)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var createdAdmin = await _adminService.CreateAdmin(admin);
-            return CreatedAtAction(nameof(GetAdminById), new { id = createdAdmin.Id }, createdAdmin);
+            return Ok(createdAdmin);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAdmin(string id, Admin updatedAdmin)
+
+        [HttpPut("updateadmin/{id}")]
+        public async Task<IActionResult> UpdateAdmin([FromRoute] string id, Admin updatedAdmin)
         {
             var admin = await _adminService.UpdateAdmin(id, updatedAdmin);
             if (admin == null) return NotFound();
@@ -47,8 +53,8 @@ namespace AdminAPI.Controllers
             return Ok(admin);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAdmin(string id)
+        [HttpDelete("deleteadmin/{id}")]
+        public async Task<IActionResult> DeleteAdmin([FromRoute] string id)
         {
             var isDeleted = await _adminService.DeleteAdmin(id);
             if (!isDeleted) return NotFound();

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BCrypt.Net;
 namespace AdminAPI.Services
 {
     public class AdminService
@@ -27,8 +27,9 @@ namespace AdminAPI.Services
                     Id = admin.Id,
                     Username = admin.Username,
                     Email = admin.Email,
-                    //Role = admin.Role,
-                    //Password = admin.Password
+                    Name=admin.Name,   
+                    Phone=admin.Phone,
+                    
                 })
                 .ToListAsync();
         }
@@ -44,23 +45,25 @@ namespace AdminAPI.Services
                 Id = admin.Id,
                 Username = admin.Username,
                 Email = admin.Email,
-                //Role = admin.Role,
-                //Password = admin.Password
+                Name = admin.Name,
+                Phone = admin.Phone,
             };
         }
         //to pass to interval values
 
-        public async Task<AdminInternalDto> GetAdminByUsername(string Id)
+        public async Task<AdminInternalDto> GetAdminByUsername(string IdorEmail)
         {
             var admin = await _dbContext.Admins
-                .Where(a => a.Id == Id)
+                .Where(a => a.Id == IdorEmail || a.Email == IdorEmail)
                 .Select(a => new AdminInternalDto
                 {
                     Id = a.Id,
                     Username = a.Username,
                     Email = a.Email,
                     Role = a.Role,
-                    Password = a.Password
+                    Password = a.Password,
+                    Name = a.Name,
+                    Phone = a.Phone,
                 })
                 .FirstOrDefaultAsync();
 
@@ -73,6 +76,7 @@ namespace AdminAPI.Services
             try
             {
                 admin.Role = "admin";
+
                 // Generate a new unique ID
                 var newId = GenerateNewId();
                 while (await _dbContext.Admins.AnyAsync(a => a.Id == newId))
@@ -81,19 +85,17 @@ namespace AdminAPI.Services
                 }
                 admin.Id = newId;
 
+                // Hash the password before storing it
+                admin.Password = BCrypt.Net.BCrypt.HashPassword(admin.Password);
+
                 _dbContext.Admins.Add(admin);
                 await _dbContext.SaveChangesAsync();
                 return admin;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                // Log the exception details (consider using a logging framework)
-                throw new Exception("Error while creating admin", ex);
-            }
-            catch (FormatException ex)
-            {
-                // Handle format exception specifically
-                throw new Exception("Error while generating a new ID", ex);
+                // Handle or log the exception as needed
+                throw new InvalidOperationException("Error creating admin.", ex);
             }
         }
 

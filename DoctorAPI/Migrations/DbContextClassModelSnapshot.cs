@@ -23,10 +23,30 @@ namespace DoctorAPI.Migrations
 
             modelBuilder.Entity("DoctorAPI.Models.Doctor", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("DoctorId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DOB")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ImageBase64")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -46,7 +66,11 @@ namespace DoctorAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DoctorId");
 
                     b.ToTable("Doctors");
                 });

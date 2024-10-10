@@ -15,8 +15,8 @@ namespace DoctorAPI.Controllers
             _doctorService = doctorService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetDoctorByUsername(string id)
+        [HttpGet("getdoctorbyusername/{id}")]
+        public async Task<IActionResult> GetDoctorByUsername([FromRoute]string id)
         {
             var doctor = await _doctorService.GetDoctorByUsername(id);
             if (doctor == null)
